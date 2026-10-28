@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block title %}Webhooks · SMRI Attendance Logging Backend{% endblock %}{% block content %}
+<h1>Outbound webhooks</h1><p>Every punch is queued durably and retried without delaying the device response.</p>
+<form class="panel webhook-form" method="post">
+  <label>Name<input name="name" required placeholder="Abhyuday ERPNext"></label>
+  <label>Destination URL<input type="url" name="url" required placeholder="https://example.com/api/method/app.module.insert_attendance_records"></label>
+  <label>Device scope<select name="device_id"><option value="">All devices (central)</option>{% for d in device_rows %}<option value="{{ d.id }}">{{ d.name }} · {{ d.serial_number }}</option>{% endfor %}</select></label>
+  <label>Payload format<select name="format"><option value="frappe_attendance">Frappe attendance function</option><option value="normalized">Normalized JSON</option></select></label>
+  <label>Bearer token (optional)<input name="bearer_token" autocomplete="new-password"></label>
+  <label>HMAC signing secret (optional)<input name="secret" autocomplete="new-password"></label>
+  <button>Add destination</button>
+</form>
+<div class="notice"><strong>Frappe attendance</strong> sends a JSON request containing <code>device_employee_id</code> and a JSON-string <code>data</code> list, with attendance time formatted in IST as <code>YYYY-MM-DD HH:MM:SS</code>.</div>
+<h2>Destinations</h2><div class="table"><table><thead><tr><th>Name</th><th>Scope</th><th>Format</th><th>URL</th><th>Auth</th><th>Status</th><th></th></tr></thead><tbody>{% for e in endpoints %}<tr><td>{{ e.name }}</td><td>{{ devices[e.device_id].name if e.device_id in devices else "All devices" }}</td><td>{{ "Frappe attendance" if e.format == "frappe_attendance" else "Normalized JSON" }}</td><td><code>{{ e.url }}</code></td><td>{{ "Bearer" if e.bearer_token else ("HMAC" if e.secret else "Guest") }}</td><td>{{ "Enabled" if e.enabled else "Disabled" }}</td><td><form method="post" action="/admin/webhooks/{{ e.id }}/toggle"><button>{{ "Disable" if e.enabled else "Enable" }}</button></form></td></tr>{% else %}<tr><td colspan="7">No destinations configured.</td></tr>{% endfor %}</tbody></table></div>
+<h2>Recent deliveries</h2><div class="table"><table><thead><tr><th>ID</th><th>Endpoint</th><th>Punch ID</th><th>Status</th><th>Attempts</th><th>Last error</th></tr></thead><tbody>{% for d in deliveries %}<tr><td>{{ d.id }}</td><td>{{ d.endpoint_id }}</td><td>{{ d.punch_id }}</td><td>{{ d.status }}</td><td>{{ d.attempts }}</td><td>{{ d.last_error or "—" }}</td></tr>{% else %}<tr><td colspan="6">No deliveries yet.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}
+

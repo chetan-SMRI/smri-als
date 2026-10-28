@@ -1,0 +1,42 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in .env}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-chetan@123}
+      SESSION_SECRET: ${SESSION_SECRET:-change-this-session-secret-in-production}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8010}
+      TIMEZONE: ${TIMEZONE:-Asia/Kolkata}
+      DEVICE_ERROR_DELAY: ${DEVICE_ERROR_DELAY:-30}
+      DEVICE_TRANS_INTERVAL: ${DEVICE_TRANS_INTERVAL:-1}
+      WEBHOOK_POLL_SECONDS: ${WEBHOOK_POLL_SECONDS:-2}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8010:8010"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8010/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: smri_attendance
+      POSTGRES_USER: smri
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - smri_attendance_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smri -d smri_attendance"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  smri_attendance_postgres:
+

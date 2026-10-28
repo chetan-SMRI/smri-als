@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}Dashboard · SMRI Attendance Logging Backend{% endblock %}{% block content %}
+<h1>Dashboard</h1>
+<section class="cards"><div><b>{{ counts.devices }}</b><span>Devices</span></div><div><b>{{ counts.employees }}</b><span>Device employees</span></div><div><b>{{ counts.punches }}</b><span>Punches</span></div><div><b>{{ counts.pending }}</b><span>Webhook queue</span></div></section>
+<h2>Device status</h2><div class="table"><table><thead><tr><th>Name</th><th>Serial number</th><th>Last contact (IST)</th><th>Status</th></tr></thead><tbody>{% for d in devices %}<tr><td>{{ d.name }}</td><td><code>{{ d.serial_number }}</code></td><td>{{ d.last_ping|local_datetime }}</td><td>{% if is_online(d.last_ping) %}<span class="good">Online</span>{% else %}<span class="muted">Offline</span>{% endif %}</td></tr>{% else %}<tr><td colspan="4">No device has connected yet.</td></tr>{% endfor %}</tbody></table></div>
+<h2>Latest punches</h2><div class="table"><table><thead><tr><th>Punch time (IST)</th><th>Employee</th><th>Device</th><th>Verify</th></tr></thead><tbody>{% for p in recent %}<tr><td>{{ p.punch_time|local_datetime }}</td><td>{{ p.employee_code }}</td><td>{{ p.device.serial_number }}</td><td>{{ p.verify }}</td></tr>{% else %}<tr><td colspan="4">No punches received.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}
+

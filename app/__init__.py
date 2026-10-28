@@ -1,0 +1,2 @@
+"""SMRI Attendance Logging Backend."""
+

@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}Punches · SMRI Attendance Logging Backend{% endblock %}{% block content %}
+<div class="heading"><div><h1>Punch history</h1><p>Raw device events only—no shift or attendance calculations.</p></div><a class="button" href="/admin/punches.csv">Export CSV</a></div>
+<form class="filter" method="get"><input name="q" value="{{ q }}" placeholder="Employee code or raw data"><button>Search</button></form>
+<div class="table"><table><thead><tr><th>Punch time (IST)</th><th>Employee</th><th>Device</th><th>Status</th><th>Verify</th><th>Received by server (IST)</th></tr></thead><tbody>{% for p in punches %}<tr><td>{{ p.punch_time|local_datetime }}</td><td><strong>{{ p.employee_code }}</strong></td><td>{{ devices[p.device_id].name }}</td><td>{{ p.status }}</td><td>{{ p.verify }}</td><td>{{ p.received_at|local_datetime }}</td></tr>{% else %}<tr><td colspan="6">No matching punches.</td></tr>{% endfor %}</tbody></table></div>
+<div class="pagination">{% if page > 1 %}<a href="?q={{ q }}&page={{ page-1 }}">Previous</a>{% endif %}<span>Page {{ page }}</span>{% if punches|length == 100 %}<a href="?q={{ q }}&page={{ page+1 }}">Next</a>{% endif %}</div>
+{% endblock %}
+

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login · SMRI Attendance Logging Backend</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="login-body">
+  <main class="login-shell">
+    <form class="login-card" method="post" action="/admin/login">
+      <div class="login-mark">SMRI</div>
+      <h1>Attendance Logging Backend</h1>
+      <p>Sign in to manage devices, punches, employees, and webhooks.</p>
+      {% if error %}<div class="login-error">{{ error }}</div>{% endif %}
+      <label>Username<input name="username" autocomplete="username" autofocus required></label>
+      <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+      <button type="submit">Sign in</button>
+    </form>
+  </main>
+</body>
+</html>

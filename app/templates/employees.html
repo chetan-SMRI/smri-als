@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block title %}Employees · SMRI Attendance Logging Backend{% endblock %}{% block content %}
+<h1>Employees from devices</h1><p>This list is populated only from device uploads or command responses. The portal never pushes or deletes employees.</p>
+<form class="filter" method="get">
+  <select name="device_id"><option value="">All devices</option>{% for d in device_rows %}<option value="{{ d.id }}" {% if selected_device_id == d.id %}selected{% endif %}>{{ d.name }} · {{ d.serial_number }}</option>{% endfor %}</select>
+  <input name="q" value="{{ q }}" placeholder="Employee ID or name">
+  <button>Filter</button>
+  {% if selected_device_id or q %}<a class="button" href="/admin/employees">Clear</a>{% endif %}
+</form>
+<div class="table"><table><thead><tr><th>Device / office</th><th>Employee ID</th><th>Name</th><th>Updated (IST)</th></tr></thead><tbody>{% for e in employees %}<tr><td>{{ devices[e.device_id].name if e.device_id in devices else "—" }}</td><td><strong>{{ e.employee_code }}</strong></td><td>{{ e.name or "—" }}</td><td>{{ e.updated_at|local_datetime }}</td></tr>{% else %}<tr><td colspan="4">No employee records have been uploaded by a device.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}
+
