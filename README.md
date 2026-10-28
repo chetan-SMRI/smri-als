@@ -31,6 +31,7 @@ The routes deliberately return device-compatible `text/plain`, not JSON.
 1. Clone your repository and enter the project directory:
 
    ```bash
+   cd /opt/
    git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
    cd YOUR-REPOSITORY
    ```
